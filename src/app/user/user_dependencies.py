@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import get_session
@@ -20,10 +20,10 @@ async def get_user_service(
 
 
 async def get_current_user(
-    user_id: int,
+    user_telegram_id: str = Path(...),
     session: AsyncSession = Depends(get_session),
     service: UserService = Depends(get_user_service),
 ) -> User:
-    async with session.begin():
-        user = await service.get_user_by_id(session, user_id)
-        return user
+    await session.begin()
+    user = await service.get_user_by_telegram_id(session, user_telegram_id)
+    return user

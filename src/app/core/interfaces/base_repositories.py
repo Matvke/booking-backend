@@ -33,7 +33,9 @@ class Repository(
         """Схема ответа"""
 
     @abstractmethod
-    async def create(self, session: AsyncSession, data: CreateSchemaT) -> None:
+    async def create(
+        self, session: AsyncSession, data: CreateSchemaT
+    ) -> ResponseSchemaT:
         """
         Создать объект в БД. Не применяет commit.
 
@@ -44,7 +46,7 @@ class Repository(
     @abstractmethod
     async def update(
         self, session: AsyncSession, id: int, data: UpdateSchemaT
-    ) -> None:
+    ) -> ResponseSchemaT:
         """
         Обновить любой объект по id, исключая архивные. Не применяет commit.
 
@@ -149,7 +151,9 @@ class SoftDeleteRepository(
         """Схема ответа"""
 
     @abstractmethod
-    async def create(self, session: AsyncSession, data: CreateSchemaT) -> None:
+    async def create(
+        self, session: AsyncSession, data: CreateSchemaT
+    ) -> ResponseSchemaT:
         """
         Создать объект в БД. Не применяет commit.
 
@@ -160,7 +164,7 @@ class SoftDeleteRepository(
     @abstractmethod
     async def update(
         self, session: AsyncSession, id: int, data: UpdateSchemaT
-    ) -> None:
+    ) -> ResponseSchemaT:
         """
         Обновить любой объект по id. Не применяет commit.
 

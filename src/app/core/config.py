@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     API_SECRET_KEY: str
+    DEBUG: bool
 
     model_config = SettingsConfigDict(
         extra="ignore", env_file=".env", env_file_encoding="utf-8"

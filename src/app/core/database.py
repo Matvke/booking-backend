@@ -1,11 +1,19 @@
+import logging
+
 from sqlalchemy.ext.asyncio import (
+    AsyncSession,
     async_sessionmaker,
     create_async_engine,
-    AsyncSession,
 )
 from sqlalchemy.orm import DeclarativeBase
+
 from app.core.config import settings
 
+sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
+if settings.DEBUG:
+    sqlalchemy_logger.setLevel(logging.DEBUG)
+else:
+    sqlalchemy_logger.setLevel(logging.INFO)
 
 DATABASE_URL = settings.get_db_url()
 

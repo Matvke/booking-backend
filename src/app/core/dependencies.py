@@ -13,5 +13,5 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 async def get_uow() -> AsyncGenerator[UnitOfWork, None]:
     uow = UnitOfWork(async_session_factory)
-    async with uow:
-        yield uow
+    async with uow as session:
+        yield session

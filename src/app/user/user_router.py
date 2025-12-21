@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 
 from app.core.dependencies import get_uow
 from app.core.implementations.uow import UnitOfWork
@@ -20,29 +20,27 @@ user_router = APIRouter(
 @user_router.post(path="")
 async def create_user(
     user: UserCreateSchema,
-    uow: UnitOfWork = Depends(get_uow),
+    session: UnitOfWork = Depends(get_uow),
     service: UserService = Depends(get_user_service),
 ) -> UserResponseSchema:
-    async with uow.session.begin():
-        user = await service.create_user(uow.session, user)
-        return user
+    return await service.create_user(session, user)
 
 
-@user_router.get(path="/{user_id}")
+@user_router.get(path="/{user_telegram_id}")
 async def get_user_by_id(
-    user_id: int,
-    uow: UnitOfWork = Depends(get_uow),
     user: UserResponseSchema = Depends(get_current_user),
 ) -> UserResponseSchema:
     return user
 
 
-@user_router.put(path="/{user_id}")
+@user_router.put(path="/{user_telegram_id}")
 async def update_user(
-    user_id: int,
     user_data: UserUpdateSchema,
-    uow: UnitOfWork = Depends(get_uow),
+    user_telegram_id: str = Path(
+        min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$"
+    ),
+    session: UnitOfWork = Depends(get_uow),
     service: UserService = Depends(get_user_service),
 ) -> UserResponseSchema:
-    async with uow.session.begin():
-        return await service.update_user(uow.session, user_id, user_data)
+    user = await service.get_user_by_telegram_id(session, user_telegram_id)
+    return await service.update_user(session, user.id, user_data)

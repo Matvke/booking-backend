@@ -53,21 +53,35 @@ class AlchRepository(
             return None
         return self.response_schema.model_validate(model_instance)
 
-    async def create(self, session: AsyncSession, data: CreateSchemaT) -> None:
+    async def create(
+        self, session: AsyncSession, data: CreateSchemaT
+    ) -> ResponseSchemaT:
         entity_data = data.model_dump()
-        statement: Insert = insert(self.model).values(**entity_data)
-        await session.execute(statement)
+        statement: Insert = (
+            insert(self.model).values(**entity_data).returning(self.model)
+        )
+        result = await session.execute(statement)
+        await session.flush()
+        model_instance = result.scalar_one()
+        return self._to_schema(model_instance)
 
     async def update(
         self, session: AsyncSession, id: int, data: UpdateSchemaT
-    ) -> None:
+    ) -> ResponseSchemaT:
         values = data.model_dump(exclude_unset=True)
         statement: Update = (
-            update(self.model).where(self.model.id == id).values(**values)
+            update(self.model)
+            .where(self.model.id == id)
+            .values(**values)
+            .returning(self.model)
         )
+        statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
-        if not result.rowcount:
+        await session.flush()
+        model_instance = result.scalar_one()
+        if not result:
             raise ValueError(f"Entity {self.model} with id {id} not found.")
+        return self._to_schema(model_instance)
 
     async def delete(self, session: AsyncSession, id: int) -> None:
         statement = delete(self.model).where(self.model.id == id)
@@ -145,22 +159,37 @@ class AlchSoftDeleteRepository(
             return statement.where(not_(self.model.disabled))
         return statement
 
-    async def create(self, session: AsyncSession, data: CreateSchemaT) -> None:
+    async def create(
+        self, session: AsyncSession, data: CreateSchemaT
+    ) -> ResponseSchemaT:
         entity_data = data.model_dump()
-        statement: Insert = insert(self.model).values(**entity_data)
-        await session.execute(statement)
+        statement: Insert = (
+            insert(self.model).values(**entity_data).returning(self.model)
+        )
+        result = await session.execute(statement)
+        await session.flush()
+        model_instance = result.scalar_one()
+        return self._to_schema(model_instance)
 
     async def update(
         self, session: AsyncSession, id: int, data: UpdateSchemaT
-    ) -> None:
-        values = data.model_dump()
+    ) -> ResponseSchemaT:
+        values = data.model_dump(exclude_unset=True)
+        if not values:
+            raise ValueError("At least one field must be provided")
         statement: Update = (
-            update(self.model).where(self.model.id == id).values(**values)
+            update(self.model)
+            .where(self.model.id == id)
+            .values(**values)
+            .returning(self.model)
         )
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
-        if not result.rowcount:
+        await session.flush()
+        model_instance = result.scalar_one()
+        if not result:
             raise ValueError(f"Entity {self.model} with id {id} not found.")
+        return self._to_schema(model_instance)
 
     async def delete(self, session: AsyncSession, id: int) -> None:
         statement = delete(self.model).where(self.model.id == id)

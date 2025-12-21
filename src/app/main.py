@@ -1,14 +1,14 @@
 import logging
+
+from fastapi import APIRouter, FastAPI
+
 from app.user.user_router import user_router
-from fastapi import FastAPI, APIRouter
 
 app = FastAPI(
     version="0.0.1",
     title="booking-backend",
 )
-root_router = APIRouter(
-    prefix='/api/v1'
-)
+root_router = APIRouter(prefix="/api/v1")
 root_router.include_router(user_router)
 
 app.include_router(root_router)
