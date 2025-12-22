@@ -66,9 +66,7 @@ class Repository(
         """
 
     @abstractmethod
-    async def get_by_id(
-        self, session: AsyncSession, id: int
-    ) -> ResponseSchemaT | None:
+    async def get_by_id(self, session: AsyncSession, id: int) -> ResponseSchemaT | None:
         """
         Получить любой объект по id, исключая архивные
 
@@ -127,9 +125,7 @@ class Repository(
         """
 
     @abstractmethod
-    def _to_schema(
-        self, model_instance: ModelT | None
-    ) -> ResponseSchemaT | None:
+    def _to_schema(self, model_instance: ModelT | None) -> ResponseSchemaT | None:
         """Привести модель БД к схеме"""
 
 
@@ -184,9 +180,7 @@ class SoftDeleteRepository(
         """
 
     @abstractmethod
-    async def get_by_id(
-        self, session: AsyncSession, id: int
-    ) -> ResponseSchemaT | None:
+    async def get_by_id(self, session: AsyncSession, id: int) -> ResponseSchemaT | None:
         """
         Получить любой объект по id, исключая архивные.
 

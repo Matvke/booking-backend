@@ -22,9 +22,7 @@ from ..interfaces.base_repositories import (
 )
 
 
-class AlchRepository(
-    Generic[ModelT, CreateSchemaT, UpdateSchemaT, ResponseSchemaT]
-):
+class AlchRepository(Generic[ModelT, CreateSchemaT, UpdateSchemaT, ResponseSchemaT]):
     def __init__(
         self,
         model: type[ModelT],
@@ -46,9 +44,7 @@ class AlchRepository(
     def response_schema(self) -> type[ResponseSchemaT]:
         return self._response_schema
 
-    def _to_schema(
-        self, model_instance: ModelT | None
-    ) -> ResponseSchemaT | None:
+    def _to_schema(self, model_instance: ModelT | None) -> ResponseSchemaT | None:
         if model_instance is None:
             return None
         return self.response_schema.model_validate(model_instance)
@@ -75,12 +71,9 @@ class AlchRepository(
             .values(**values)
             .returning(self.model)
         )
-        statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
         await session.flush()
         model_instance = result.scalar_one()
-        if not result:
-            raise ValueError(f"Entity {self.model} with id {id} not found.")
         return self._to_schema(model_instance)
 
     async def delete(self, session: AsyncSession, id: int) -> None:
@@ -89,9 +82,7 @@ class AlchRepository(
         if not result.rowcount:
             raise ValueError(f"Entity {self.model} with id {id} not found.")
 
-    async def get_by_id(
-        self, session: AsyncSession, id: int
-    ) -> ResponseSchemaT | None:
+    async def get_by_id(self, session: AsyncSession, id: int) -> ResponseSchemaT | None:
         statement = select(self.model).where(self.model.id == id)
         result = await session.execute(statement)
         model_instance = result.scalar_one_or_none()
@@ -104,9 +95,7 @@ class AlchRepository(
         offset: int = 0,
         **filters,
     ) -> list[ResponseSchemaT]:
-        statement = (
-            select(self.model).filter_by(**filters).offset(offset).limit(limit)
-        )
+        statement = select(self.model).filter_by(**filters).offset(offset).limit(limit)
         result = await session.execute(statement)
         model_instances = result.scalars().all()
         return [self._to_schema(m) for m in model_instances]
@@ -187,8 +176,6 @@ class AlchSoftDeleteRepository(
         result = await session.execute(statement)
         await session.flush()
         model_instance = result.scalar_one()
-        if not result:
-            raise ValueError(f"Entity {self.model} with id {id} not found.")
         return self._to_schema(model_instance)
 
     async def delete(self, session: AsyncSession, id: int) -> None:
@@ -197,9 +184,7 @@ class AlchSoftDeleteRepository(
         if not result.rowcount:
             raise ValueError(f"Entity {self.model} with id {id} not found.")
 
-    async def get_by_id(
-        self, session: AsyncSession, id: int
-    ) -> ResponseSchemaT | None:
+    async def get_by_id(self, session: AsyncSession, id: int) -> ResponseSchemaT | None:
         statement = select(self.model).where(self.model.id == id)
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
@@ -213,9 +198,7 @@ class AlchSoftDeleteRepository(
         offset: int = 0,
         **filters,
     ) -> list[ResponseSchemaT]:
-        statement = (
-            select(self.model).filter_by(**filters).offset(offset).limit(limit)
-        )
+        statement = select(self.model).filter_by(**filters).offset(offset).limit(limit)
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
         model_instances = result.scalars().all()
@@ -290,9 +273,7 @@ class AlchSoftDeleteRepository(
         model_instance = result.scalar_one_or_none()
         return self._to_schema(model_instance)
 
-    def _to_schema(
-        self, model_instance: ModelT | None
-    ) -> ResponseSchemaT | None:
+    def _to_schema(self, model_instance: ModelT | None) -> ResponseSchemaT | None:
         if model_instance is None:
             return None
         return self.response_schema.model_validate(model_instance)

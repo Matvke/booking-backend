@@ -6,6 +6,7 @@ from conftest import (
     UpdateSchema,
 )
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
 
 
 class TestAlchRepository:
@@ -14,9 +15,7 @@ class TestAlchRepository:
     @pytest.mark.anyio
     async def test_create_success(self, test_repository, db_session):
         """Тест успешного создания записи"""
-        create_data = CreateSchema(
-            name="John Doe", email="john@example.com"
-        )
+        create_data = CreateSchema(name="John Doe", email="john@example.com")
 
         await test_repository.create(db_session, create_data)
         await db_session.commit()
@@ -74,7 +73,7 @@ class TestAlchRepository:
         """Тест обновления несуществующей записи"""
         update_data = UpdateSchema(name="Updated")
 
-        with pytest.raises(ValueError, match="not found"):
+        with pytest.raises(NoResultFound):
             await test_repository.update(db_session, 999999, update_data)
 
     @pytest.mark.anyio
@@ -101,15 +100,12 @@ class TestAlchRepository:
     async def test_get_many(self, test_repository, db_session):
         """Тест получения нескольких записей"""
         models = [
-            Model(name=f"User{i}", email=f"user{i}@example.com")
-            for i in range(5)
+            Model(name=f"User{i}", email=f"user{i}@example.com") for i in range(5)
         ]
         db_session.add_all(models)
         await db_session.commit()
 
-        results = await test_repository.get_many(
-            db_session, limit=10, offset=0
-        )
+        results = await test_repository.get_many(db_session, limit=10, offset=0)
 
         assert len(results) == 5
         assert all(isinstance(r, ResponseSchema) for r in results)
@@ -126,9 +122,7 @@ class TestAlchRepository:
         db_session.add_all(models)
         await db_session.commit()
 
-        results = await test_repository.get_many(
-            db_session, name="Alice", limit=10
-        )
+        results = await test_repository.get_many(db_session, name="Alice", limit=10)
 
         assert len(results) == 2
         assert all(r.name == "Alice" for r in results)
@@ -137,8 +131,7 @@ class TestAlchRepository:
     async def test_get_many_by_ids(self, test_repository, db_session):
         """Тест получения по списку ID"""
         models = [
-            Model(name=f"User{i}", email=f"user{i}@example.com")
-            for i in range(10)
+            Model(name=f"User{i}", email=f"user{i}@example.com") for i in range(10)
         ]
         db_session.add_all(models)
         await db_session.commit()
@@ -161,9 +154,7 @@ class TestAlchRepository:
         assert ids == {models[0].id, models[2].id, models[4].id}
 
     @pytest.mark.anyio
-    async def test_get_one_or_none_not_found(
-        self, test_repository, db_session
-    ):
+    async def test_get_one_or_none_not_found(self, test_repository, db_session):
         """Тест получения одной записи или None (не найдено)"""
         result = await test_repository.get_one_or_none(
             db_session, email="nonexistent@example.com"

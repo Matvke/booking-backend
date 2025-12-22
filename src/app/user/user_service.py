@@ -33,6 +33,4 @@ class UserService:
     async def get_user_by_telegram_id(
         self, session: AsyncSession, telegram_id: str
     ) -> UserResponseSchema:
-        return await self.user_repository.get_by_telegram_id(
-            session, telegram_id
-        )
+        return await self.user_repository.get_by_telegram_id(session, telegram_id)

@@ -36,9 +36,7 @@ async def get_user_by_id(
 @user_router.put(path="/{user_telegram_id}")
 async def update_user(
     user_data: UserUpdateSchema,
-    user_telegram_id: str = Path(
-        min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$"
-    ),
+    user_telegram_id: str = Path(min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$"),
     session: AsyncSession = Depends(get_session),
     service: UserService = Depends(get_user_service),
 ) -> UserResponseSchema:

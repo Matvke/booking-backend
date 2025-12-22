@@ -6,18 +6,11 @@ from app.core.orm_mixins import IDIntMixin, TimestampDisabledMixin
 
 
 class User(Base, IDIntMixin, TimestampDisabledMixin):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
-    telegram_id: Mapped[int] = mapped_column(
-        String,
-        nullable=False,
-        unique=True
-    )
+    telegram_id: Mapped[int] = mapped_column(String, nullable=False, unique=True)
     phone_number: Mapped[str | None] = mapped_column(
         String(),
         nullable=True,
     )
-    name: Mapped[str | None] = mapped_column(
-        String(50),
-        nullable=True
-    )
+    name: Mapped[str | None] = mapped_column(String(50), nullable=True)

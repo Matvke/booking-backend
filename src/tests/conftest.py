@@ -50,9 +50,7 @@ async def db_session():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    async_session = sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False
-    )
+    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     session = async_session()
     try:
@@ -69,9 +67,7 @@ def test_repository():
     from app.core.implementations.sqlalchemy_repository import AlchRepository
 
     class TestRepository(
-        AlchRepository[
-            Model, CreateSchema, UpdateSchema, ResponseSchema
-        ]
+        AlchRepository[Model, CreateSchema, UpdateSchema, ResponseSchema]
     ):
         pass
 

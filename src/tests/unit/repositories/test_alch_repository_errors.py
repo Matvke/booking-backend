@@ -50,14 +50,10 @@ class TestAlchRepositoryErrors:
         )
 
         with pytest.raises(TypeError, match="has 'disabled' field"):
-            AlchRepository(
-                model=SoftDeleteModel, response_schema=ResponseSchema
-            )
+            AlchRepository(model=SoftDeleteModel, response_schema=ResponseSchema)
 
     @pytest.mark.anyio
-    async def test_get_one_or_none_multiple_found(
-        self, test_repository, db_session
-    ):
+    async def test_get_one_or_none_multiple_found(self, test_repository, db_session):
         """Тест получения когда несколько записей подходят"""
         models = [
             Model(name="Duplicate", email="dup1@example.com"),

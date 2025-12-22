@@ -17,9 +17,7 @@ class UserBaseSchema(BaseModel):
 
 
 class UserCreateSchema(UserBaseSchema):
-    telegram_id: str = Field(
-        min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$"
-    )
+    telegram_id: str = Field(min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$")
 
 
 class UserUpdateSchema(UserBaseSchema):

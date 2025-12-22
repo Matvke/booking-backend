@@ -20,9 +20,7 @@ from .user_schemas import (
 
 
 class UserRepository(
-    SoftDeleteRepository[
-        User, UserCreateSchema, UserUpdateSchema, UserResponseSchema
-    ],
+    SoftDeleteRepository[User, UserCreateSchema, UserUpdateSchema, UserResponseSchema],
     Protocol,
 ):
     @abstractmethod
@@ -47,9 +45,7 @@ class AlchUserRepository(
     async def get_by_telegram_id(
         self, session: AsyncSession, telegram_id: str
     ) -> UserResponseSchema | None:
-        statement = select(self.model).where(
-            self.model.telegram_id == telegram_id
-        )
+        statement = select(self.model).where(self.model.telegram_id == telegram_id)
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
         model_instance = result.scalar_one_or_none()
