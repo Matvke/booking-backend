@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Path
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.dependencies import get_uow
-from app.core.implementations.uow import UnitOfWork
+from app.core.dependencies import get_session
 
 from .user_dependencies import get_current_user, get_user_service
 from .user_schemas import (
@@ -20,7 +20,7 @@ user_router = APIRouter(
 @user_router.post(path="")
 async def create_user(
     user: UserCreateSchema,
-    session: UnitOfWork = Depends(get_uow),
+    session: AsyncSession = Depends(get_session),
     service: UserService = Depends(get_user_service),
 ) -> UserResponseSchema:
     return await service.create_user(session, user)
@@ -39,7 +39,7 @@ async def update_user(
     user_telegram_id: str = Path(
         min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$"
     ),
-    session: UnitOfWork = Depends(get_uow),
+    session: AsyncSession = Depends(get_session),
     service: UserService = Depends(get_user_service),
 ) -> UserResponseSchema:
     user = await service.get_user_by_telegram_id(session, user_telegram_id)

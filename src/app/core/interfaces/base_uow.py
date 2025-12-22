@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class IUnitOfWork(ABC):
+class AbstractUnitOfWork(ABC):
     @abstractmethod
     def __init__(self):
         ...

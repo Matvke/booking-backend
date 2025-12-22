@@ -24,6 +24,6 @@ async def get_current_user(
     session: AsyncSession = Depends(get_session),
     service: UserService = Depends(get_user_service),
 ) -> User:
-    await session.begin()
+    """Зависимости в fastapi вызываются до валидации body."""
     user = await service.get_user_by_telegram_id(session, user_telegram_id)
     return user

@@ -1,10 +1,15 @@
 from pydantic import BaseModel, Field, ConfigDict
 from pydantic_extra_types.phone_numbers import PhoneNumber
-
 from app.core.schemas_mixins import (
     IDIntSchemaMixin,
     TimestampDisabledSchemaMixin,
 )
+
+
+class RussianPhoneNumber(PhoneNumber):
+    default_region_code = "RU"
+    supported_regions = ["RU"]
+    phone_format = "INTERNATIONAL"
 
 
 class UserBaseSchema(BaseModel):
@@ -18,9 +23,8 @@ class UserCreateSchema(UserBaseSchema):
 
 
 class UserUpdateSchema(UserBaseSchema):
-    # TODO: Не принимает номера начинающиеся с 8
-    phone_number: PhoneNumber | None = None
-    name: str | None = Field(default=None, max_length=50, min_length=1)
+    phone_number: RussianPhoneNumber | None = None
+    name: str | None = Field(default=..., max_length=50, min_length=1)
 
 
 class UserResponseSchema(
