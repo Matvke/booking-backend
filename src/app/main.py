@@ -2,6 +2,7 @@ import logging
 
 from fastapi import APIRouter, FastAPI
 
+from app.specialist.specialist_router import specialist_router
 from app.user.user_router import user_router
 
 app = FastAPI(
@@ -10,6 +11,7 @@ app = FastAPI(
 )
 root_router = APIRouter(prefix="/api/v1")
 root_router.include_router(user_router)
+root_router.include_router(specialist_router)
 
 app.include_router(root_router)
 
