@@ -1,15 +1,14 @@
 from abc import abstractmethod
 from typing import Generic, Protocol, TypeVar, runtime_checkable
 
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.base_schemas import CreateSchema, ResponseSchema, UpdateSchema
 from app.core.database import Base
 
-
-CreateSchemaT = TypeVar("CreateSchemaT", bound=BaseModel)
-UpdateSchemaT = TypeVar("UpdateSchemaT", bound=BaseModel)
-ResponseSchemaT = TypeVar("ResponseSchemaT", bound=BaseModel)
+CreateSchemaT = TypeVar("CreateSchemaT", bound=CreateSchema)
+UpdateSchemaT = TypeVar("UpdateSchemaT", bound=UpdateSchema)
+ResponseSchemaT = TypeVar("ResponseSchemaT", bound=ResponseSchema)
 
 ModelT = TypeVar("ModelT", bound=Base)
 SoftDeleteModelT = TypeVar("SoftDeleteModelT", bound=Base)

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import get_session
 
-from .user_dependencies import get_current_user, get_user_service
+from .user_dependencies import get_user_service
 from .user_schemas import (
     UserCreateSchema,
     UserResponseSchema,
@@ -28,15 +28,27 @@ async def create_user(
 
 @user_router.get(path="/{user_telegram_id}")
 async def get_user_by_id(
-    user: UserResponseSchema = Depends(get_current_user),
+    user_telegram_id: str = Path(
+        ...,
+        min_length=10,
+        max_length=10,
+        pattern=r"^[1-9]\d{9}$",
+    ),
+    session: AsyncSession = Depends(get_session),
+    service: UserService = Depends(get_user_service),
 ) -> UserResponseSchema:
-    return user
+    return await service.get_user_by_telegram_id(session, user_telegram_id)
 
 
 @user_router.put(path="/{user_telegram_id}")
 async def update_user(
     user_data: UserUpdateSchema,
-    user_telegram_id: str = Path(min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$"),
+    user_telegram_id: str = Path(
+        ...,
+        min_length=10,
+        max_length=10,
+        pattern=r"^[1-9]\d{9}$",
+    ),
     session: AsyncSession = Depends(get_session),
     service: UserService = Depends(get_user_service),
 ) -> UserResponseSchema:

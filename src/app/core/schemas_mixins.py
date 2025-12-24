@@ -1,4 +1,4 @@
-from pydantic import BaseModel, AwareDatetime, ConfigDict
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 
 class IDIntSchemaMixin(BaseModel):
@@ -24,6 +24,10 @@ class DisabledSchemaMixin(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
     )
+
+
+class TelegramIDMixin(BaseModel):
+    telegram_id: str = Field(min_length=10, max_length=10, pattern=r"^[1-9]\d{9}$")
 
 
 class TimestampDisabledSchemaMixin(

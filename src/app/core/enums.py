@@ -57,3 +57,22 @@ class NotificationStatus(str, enum.Enum):
     PENDING = "pending"
     SENT = "sent"
     FAILED = "failed"
+
+
+class UserRole(str, enum.Enum):
+    USER = "user"
+    SPECIALIST = "specialist"
+    ADMIN = "admin"
+    SUPER_ADMIN = "super_admin"
+    COMPANY_OWNER = "company_owner"
+
+    @classmethod
+    def get_display_name(cls, status: "SpecialistStatus") -> str:
+        names = {
+            cls.USER: "Пользователь",
+            cls.SPECIALIST: "Специалист",
+            cls.ADMIN: "Администратор",
+            cls.SUPER_ADMIN: "Разработчик",
+            cls.COMPANY_OWNER: "Владелец",
+        }
+        return names[status]

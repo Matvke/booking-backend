@@ -13,7 +13,7 @@ sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
 if settings.DEBUG:
     sqlalchemy_logger.setLevel(logging.DEBUG)
 else:
-    sqlalchemy_logger.setLevel(logging.INFO)
+    sqlalchemy_logger.setLevel(logging.ERROR)
 
 DATABASE_URL = settings.get_db_url()
 
