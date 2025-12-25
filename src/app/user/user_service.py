@@ -1,10 +1,15 @@
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.config import settings
+
+from .user_exceptions import UserAlreadyExistsError, UserNotFoundError
 from .user_repository import UserRepository
 from .user_schemas import (
     UserCreateSchema,
-    UserUpdateSchema,
     UserResponseSchema,
+    UserUpdateSchema,
 )
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserService:
@@ -18,19 +23,38 @@ class UserService:
     async def create_user(
         self, session: AsyncSession, data: UserCreateSchema
     ) -> UserResponseSchema:
-        return await self.user_repository.create(session, data)
+        try:
+            user = await self.user_repository.create(session, data)
+        except IntegrityError as e:
+            if settings.DEBUG:
+                raise UserAlreadyExistsError(str(e))
+            else:
+                raise UserAlreadyExistsError()
+        return user
 
     async def update_user(
-        self, session: AsyncSession, id: int, schema: UserUpdateSchema
+        self, session: AsyncSession, user_id: int, schema: UserUpdateSchema
     ) -> UserResponseSchema:
-        return await self.user_repository.update(session, id, schema)
+        return await self.user_repository.update(session, user_id, schema)
 
     async def get_user_by_id(
-        self, session: AsyncSession, id: int
+        self, session: AsyncSession, user_id: int
     ) -> UserResponseSchema:
-        return await self.user_repository.get_by_id(session, id)
+        user = await self.user_repository.get_by_id(session, user_id)
+        if user is None:
+            raise UserNotFoundError(
+                key="User ID",
+                value=user_id,
+            )
+        return user
 
     async def get_user_by_telegram_id(
         self, session: AsyncSession, telegram_id: str
     ) -> UserResponseSchema:
-        return await self.user_repository.get_by_telegram_id(session, telegram_id)
+        user = await self.user_repository.get_by_telegram_id(session, telegram_id)
+        if user is None:
+            raise UserNotFoundError(
+                key="Telegram ID",
+                value=telegram_id,
+            )
+        return user

@@ -28,7 +28,7 @@ class UserRepository(
     @abstractmethod
     async def get_by_telegram_id(
         self, session: AsyncSession, telegram_id: str
-    ) -> UserResponseSchema:
+    ) -> UserResponseSchema | None:
         """Получить пользователя по telegram_id"""
 
 
@@ -93,7 +93,9 @@ class AlchUserRepository(
         statement = select(self.model).where(self.model.telegram_id == telegram_id)
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
-        model_instance = result.scalar_one()
+        model_instance = result.scalar_one_or_none()
+        if model_instance is None:
+            return None
         role = await self._get_role(session, model_instance.id)
         return self._to_schema_with_role(model_instance, role)
 

@@ -69,6 +69,15 @@ async def create_invite_token(
     return await specialist_service.create_invoke_token(session, specialist_id)
 
 
+@specialist_router.delete(path="/invite_token/{specialist_id}")
+async def delete_invite_token(
+    specialist_id: int = Path(...),
+    session: AsyncSession = Depends(get_session),
+    specialist_service: SpecialistService = Depends(get_specialist_service),
+) -> str:
+    return await specialist_service.delete_invoke_token(session, specialist_id)
+
+
 @specialist_router.post(path="/{specialist_id}")
 async def register_specialist(
     specialist_data: SpecialistInviteCode,

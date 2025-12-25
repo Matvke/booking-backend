@@ -35,12 +35,14 @@ class SpecialistRepository(
     @abstractmethod
     async def create_invoke_token(
         self, session: AsyncSession, specialist_id: int
-    ) -> str:
+    ) -> str | None:
         """Сгенерировать новый код приглашения для специалиста.
         Возвращает invite token."""
 
     @abstractmethod
-    async def get_invoke_token(self, session: AsyncSession, specialist_id: int) -> str:
+    async def get_invoke_token(
+        self, session: AsyncSession, specialist_id: int
+    ) -> str | None:
         """Получить имеющийся код приглашения для специалиста.
         Возвращает invite token."""
 
@@ -74,7 +76,7 @@ class AlchSpecialistRepository(
 
     async def create_invoke_token(
         self, session: AsyncSession, specialist_id: int
-    ) -> str:
+    ) -> str | None:
         statement = (
             update(self.model)
             .where(self.model.id == specialist_id)
@@ -84,16 +86,18 @@ class AlchSpecialistRepository(
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
         await session.flush()
-        return result.scalar_one()
+        return result.scalar_one_or_none()
 
-    async def get_invoke_token(self, session: AsyncSession, specialist_id: int) -> str:
+    async def get_invoke_token(
+        self, session: AsyncSession, specialist_id: int
+    ) -> str | None:
         statement = select(self.model.invoke_token).where(
             self.model.id == specialist_id
         )
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
         await session.flush()
-        return result.scalar_one()
+        return result.scalar_one_or_none()
 
     async def delete_invoke_token(
         self, session: AsyncSession, specialist_id: int
@@ -102,7 +106,6 @@ class AlchSpecialistRepository(
             update(self.model)
             .where(self.model.id == specialist_id)
             .values({self.model.invoke_token: None})
-            .returning(self.model.invoke_token)
         )
         statement = self._apply_disabled_filter(statement)
         result = await session.execute(statement)
