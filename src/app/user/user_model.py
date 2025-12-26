@@ -2,7 +2,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
-from app.core.orm_mixins import IDIntMixin, TimestampDisabledMixin
+from app.core.mixins.orm_mixins import IDIntMixin, TimestampDisabledMixin
 
 
 class User(Base, IDIntMixin, TimestampDisabledMixin):

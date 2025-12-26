@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 from app.core.base_schemas import CreateSchema, ResponseSchema, UpdateSchema
 from app.core.enums import SpecialistStatus
-from app.core.schemas_mixins import (
+from app.core.mixins.schemas_mixins import (
     IDIntSchemaMixin,
     TelegramIDMixin,
     TimestampDisabledSchemaMixin,

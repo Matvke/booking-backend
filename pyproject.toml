@@ -1,6 +1,6 @@
 [project]
 name = "booking-backend"
-version = "0.0.1"
+version = "0.0.2"
 description = "Backend для системы бронирования"
 authors = [{name = "Matvke"}]
 requires-python = ">=3.13"

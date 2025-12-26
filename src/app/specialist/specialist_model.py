@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
 from app.core.enums import SpecialistStatus
-from app.core.orm_mixins import IDIntMixin, TimestampDisabledMixin
+from app.core.mixins.orm_mixins import IDIntMixin, TimestampDisabledMixin
 
 
 class Specialist(Base, IDIntMixin, TimestampDisabledMixin):

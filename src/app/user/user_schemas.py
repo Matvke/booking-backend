@@ -7,7 +7,7 @@ from app.core.base_schemas import (
     UpdateSchema,
 )
 from app.core.enums import UserRole
-from app.core.schemas_mixins import (
+from app.core.mixins.schemas_mixins import (
     IDIntSchemaMixin,
     TimestampDisabledSchemaMixin,
 )
