@@ -1,12 +1,13 @@
 import pytest
-from conftest import (
+from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
+
+from tests.conftest import (
     CreateSchema,
     Model,
     ResponseSchema,
     UpdateSchema,
 )
-from sqlalchemy import select
-from sqlalchemy.exc import NoResultFound
 
 
 class TestAlchRepository:

@@ -1,17 +1,18 @@
 from unittest.mock import AsyncMock
 
 import pytest
-from conftest import (
+from sqlalchemy.exc import (
+    IntegrityError,
+    MultipleResultsFound,
+    SQLAlchemyError,
+)
+
+from tests.conftest import (
     CreateSchema,
     Model,
     ResponseSchema,
     SoftDeleteModel,
     UpdateSchema,
-)
-from sqlalchemy.exc import (
-    IntegrityError,
-    MultipleResultsFound,
-    SQLAlchemyError,
 )
 
 

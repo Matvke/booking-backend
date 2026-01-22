@@ -53,6 +53,7 @@ pythonpath = "./src"
 testpaths = ["./src/tests"]
 asyncio_mode = "auto"
 addopts = "-v"
+log_cli_level = "WARNING"  
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
